@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="diffbot" params="prefix">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="base_mass" value="0.3" /> <!-- arbitrary value for base mass -->
+  <xacro:property name="base_width" value="0.1" />
+  <xacro:property name="base_length" value="0.1" />
+  <xacro:property name="base_height" value="0.05" />
+  <xacro:property name="wheel_mass" value="0.3" /> <!-- arbitrary value for wheel mass -->
+  <xacro:property name="wheel_len" value="0.020" />
+  <xacro:property name="wheel_radius" value="0.015" />
+  <xacro:property name="caster_wheel_mass" value="0.1" /> <!-- arbitrary value for caster wheel mass -->
+  <xacro:property name="caster_wheel_radius" value="0.015" />
+  <xacro:property name="z_offset" value="-${base_height/2}" /> <!-- Space btw top of beam and the each joint -->
+
+  <!-- Base Link -->
+  <link name="${prefix}base_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ros2_control_demo_description/diffbot/meshes/base_link.stl"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ros2_control_demo_description/diffbot/meshes/base_link.stl"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${base_mass}"/>
+        <inertia
+        		ixx="5.929e+08"
+		ixy="-49780.348"
+		ixz="-2.792e+06"
+		iyx="-49780.348"
+		iyy="5.841e+08"
+		iyz="-1.641e+05"
+		izz="9.114e+07"/>
+        </inertial>
+    </link>
+
+    <joint name="${prefix}left_wheel_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}left_wheel"/>
+      <origin xyz="-54.5 98.592 18.176" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.2"/>
+    </joint>
+
+    <!-- left wheel Link -->
+    <link name="${prefix}left_wheel">
+      <collision>
+        <origin xyz="54.5 -98.592 -18.176" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/reifen_links.stl"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="54.5 -98.592 -18.176" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/reifen_links.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${wheel_mass}"/>
+        <inertia
+		ixx="4.131e+05"
+		ixy="2.158e+05"
+		ixz="40998.292"
+		iyx="2.158e+05"
+		iyy="1.699e+05"
+		iyz="-72420.186"
+		izx="40998.292"
+		izy="-72420.186"
+		izz="5.212e+05"/>
+        </inertial>
+      </link>
+
+    <joint name="${prefix}right_wheel_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}right_wheel"/>
+      <origin xyz="-54.5 -98.592 18.176" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.2"/>
+    </joint>
+
+    <!-- right wheel Link -->
+   <link name="${prefix}right_wheel">
+      <collision>
+        <origin xyz="54.5 -98.592 -18.176" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/reifen_links.stl"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="54.5 -98.592 -18.176" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/reifen_links.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${wheel_mass}"/>
+        <inertia
+		ixx="4.131e+05"
+		ixy="2.158e+05"
+		ixz="40998.292"
+		iyx="2.158e+05"
+		iyy="1.699e+05"
+		iyz="-72420.186"
+		izx="40998.292"
+		izy="-72420.186"
+		izz="5.212e+05"/>
+        </inertial>
+      </link>
+
+
+
+    <joint name="slide_horiz" type="prismatic">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}box"/>
+      <origin xyz="45 0 180" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit velocity="4.8" effort="1" lower="-50" upper="50" />
+      <dynamics damping="0.2"/>
+    </joint>
+
+   <link name="${prefix}box">
+      <collision>
+        <origin xyz="-45 0 -180" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/dummy_quader.stl"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="-45 0 -180" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/dummy_quader.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.3"/>
+        <inertia
+	ixx = "1.209e+05"
+	ixy = "14495.726"
+	ixz = "-3.109e-10"
+	iyy = "3.992e+05"
+	iyz = "-1.166e-10"
+	izz = "5.138e+05"/>
+        </inertial>
+      </link>
+
+
+    <joint name="slide_vertic" type="prismatic">
+      <parent link="${prefix}box"/>
+      <child link="${prefix}zanger"/>
+      <origin xyz="71.088 0.00 165.93" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit velocity="4.8" effort="1" lower="-50" upper="50" />
+      <dynamics damping="0.2"/>
+    </joint>
+
+   <link name="${prefix}zanger">
+      <collision>
+        <origin xyz="-71.088 0.00 -165.93"  rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/dummyzange.stl"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="-71.088 0.00 -165.93"  rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/dummyzange.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.3"/>
+        <inertia
+	ixx = "1.209e+05"
+	ixy = "14495.726"
+	ixz = "-3.109e-10"
+	iyy = "3.992e+05"
+	iyz = "-1.166e-10"
+	izz = "5.138e+05"/>
+        </inertial>
+      </link>
+
+    <joint name="slide_zange" type="prismatic">
+      <parent link="${prefix}zange"/>
+      <child link="${prefix}prismazange"/>
+      <origin xyz="98.817 -19.957 170.93" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit velocity="4.8" effort="1" lower="-50" upper="50" />
+      <dynamics damping="0.2"/>
+    </joint>
+
+   <link name="${prefix}prismazange">
+      <collision>
+        <origin xyz="-98.817 19.957 -170.93"  rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/prisma_zange.stl"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="-98.817 19.957 -170.93"  rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://ros2_control_demo_description/diffbot/meshes/prisma_zange.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.3"/>
+        <inertia
+	ixx = "1.209e+05"
+	ixy = "14495.726"
+	ixz = "-3.109e-10"
+	iyy = "3.992e+05"
+	iyz = "-1.166e-10"
+	izz = "5.138e+05"/>
+        </inertial>
+      </link>
+
+  </xacro:macro>
+
+</robot>
