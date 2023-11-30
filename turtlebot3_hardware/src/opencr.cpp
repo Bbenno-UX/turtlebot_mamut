@@ -228,7 +228,22 @@ bool OpenCR::set_wheel_velocities(const std::vector<double> & velocities)
 
   return comm_result;
 }
+bool OpenCR::write_actuators(const std::vector<int16_t> & mamut_aktoren){
 
+        uint8_t byte[8];
+        size_t ind=0;
+
+        for(auto i:mamut_aktoren){
+          byte[ind++]=i%256;//niedrigere
+          byte[ind++]=i>>8;//höhere 8 bits des werts
+          
+        }
+      uint8_t * p_data = &byte[0];
+      
+      dxl_sdk_wrapper_->write(345, 8, p_data);
+       
+        
+}
 uint8_t OpenCR::read_byte(const uint16_t & address)
 {
   return dxl_sdk_wrapper_->read_byte(address);

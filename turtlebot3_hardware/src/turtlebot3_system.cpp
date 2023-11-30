@@ -219,7 +219,14 @@ hardware_interface::return_type TurtleBot3SystemHardware::write(
   if (opencr_->set_wheel_velocities(dxl_wheel_commands_) == false) {
     RCLCPP_ERROR(logger, "Can't control wheels");
   }
-
+  std::vector<int16_t> dievals;
+  for(auto i:mamut_positions_){
+dievals.push_back(static_cast<int16_t>(i));
+  }
+//RCLCPP_INFO(this->get_logger(),"sending %d %d %i %i",byte[0] ,byte[1] ,byte[3],byte[4]);
+  if(!opencr_->write_actuators(dievals)){
+    RCLCPP_ERROR(logger, "Can't control actuators");
+  }
   return hardware_interface::return_type::OK;
 }
 }  // namespace turtlebot3_hardware

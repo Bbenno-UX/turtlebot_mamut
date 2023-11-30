@@ -92,7 +92,7 @@ public:
   std::array<double, 2> get_wheel_velocities();
 
   bool set_wheel_velocities(const std::vector<double> & velocities);
-
+  bool write_actuators(const std::vector<int16_t> & mamut_aktoren);
   void send_heartbeat(const uint8_t & count);
 
   void write_byte(const uint16_t & address, uint8_t data);
