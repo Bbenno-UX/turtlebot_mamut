@@ -81,7 +81,8 @@ hardware_interface::CallbackReturn TurtleBot3SystemHardware::on_init(
   //#######hinzugefügt
   opencr_sensor_states_.resize(
     info_.sensors[0].state_interfaces.size() +
-    info_.sensors[1].state_interfaces.size(),
+    info_.sensors[1].state_interfaces.size()+
+    info_.sensors[SWITCHES].state_interfaces.size(),
     0.0);
 RCLCPP_INFO(logger, "ANZAHL_AKTOREN %d", info_.joints.size());
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -120,6 +121,14 @@ TurtleBot3SystemHardware::export_state_interfaces()
       );
     }
   }
+    // for (uint8_t j = 0; j < SWITCH_NUMBER; j++) {
+    //   state_interfaces.emplace_back(
+    //     hardware_interface::StateInterface(
+    //       info_.sensors[i].name,
+    //       info_.sensors[i].state_interfaces[j].name,
+    //       &opencr_sensor_states_[k++])
+    //   );
+    // }
 
   return state_interfaces;
 }
@@ -208,6 +217,8 @@ hardware_interface::return_type TurtleBot3SystemHardware::read(
   opencr_sensor_states_[11] = opencr_->get_battery().percentage;
   opencr_sensor_states_[12] = opencr_->get_battery().design_capacity;
   opencr_sensor_states_[13] = opencr_->get_battery().present;
+  opencr_sensor_states_[14] = opencr_->get_switches()[0];
+  opencr_sensor_states_[15] = opencr_->get_switches()[1];
   std::vector<double> vels=opencr_->get_actuator_velocities();
   std::vector<double> posis=opencr_->get_actuator_positions();
   std::copy(vels.begin(),vels.end(),mamut_velocities_.begin());

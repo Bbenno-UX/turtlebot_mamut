@@ -17,7 +17,8 @@
 #ifndef TURTLEBOT3_HARDWARE__TURTLEBOT3_SYSTEM_HPP_
 #define TURTLEBOT3_HARDWARE__TURTLEBOT3_SYSTEM_HPP_
 #define WHEELJOINT_NUMBER 2
-
+#define SWITCH_NUMBER 2
+#define SWITCHES 2
 #include <memory>
 #include <string>
 #include <vector>

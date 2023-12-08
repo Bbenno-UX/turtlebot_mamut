@@ -92,6 +92,7 @@ public:
   std::array<double, 2> get_wheel_velocities();
   std::vector<double> get_actuator_positions();
   std::vector<double> get_actuator_velocities();
+  std::array<uint8_t, 2> get_switches();
   bool set_wheel_velocities(const std::vector<double> & velocities);
   bool write_actuators(const std::vector<int16_t> & mamut_aktoren);
   void send_heartbeat(const uint8_t & count);

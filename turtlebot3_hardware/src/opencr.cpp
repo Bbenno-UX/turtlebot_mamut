@@ -244,6 +244,12 @@ std::vector<double> OpenCR::get_actuator_velocities(){
   //erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.dynxl_mamut_2_akt_vel.address,opencr_control_table.dynxl_mamut_2_akt_vel.length)));
   return erg;
 }
+std::array<uint8_t,2> OpenCR::get_switches(){
+  std::array<uint8_t,2> erg;
+  erg[0]=static_cast<uint8_t>(get_data<bool>(opencr_control_table.mamut_endschalt_1.address,1));
+  erg[1]=static_cast<uint8_t>(get_data<bool>(opencr_control_table.mamut_endschalt_2.address,1));
+  return erg;
+}
 bool OpenCR::write_actuators(const std::vector<int16_t> & mamut_aktoren){
 
         uint8_t byte[8];
@@ -256,8 +262,8 @@ bool OpenCR::write_actuators(const std::vector<int16_t> & mamut_aktoren){
         }
       uint8_t * p_data = &byte[0];
       
-      dxl_sdk_wrapper_->write(345, 8, p_data);
-       
+      bool comm_result=dxl_sdk_wrapper_->write(345, 8, p_data);
+      return comm_result;
         
 }
 uint8_t OpenCR::read_byte(const uint16_t & address)
