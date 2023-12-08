@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 
-#define CONTROL_TABLE_SIZE 353 //hinzugefügt step 1
+#define CONTROL_TABLE_SIZE 371 //hinzugefügt step 1
 
 namespace robotis
 {
@@ -158,10 +158,20 @@ typedef struct
 
   ControlItem goal_current_write_joints = {342, 1};
   ControlItem goal_current_write_gripper = {343, 1};
-  ControlItem stepper_mamut_1 = {345, 1};
-  ControlItem stepper_mamut_2  = {347, 1};
-  ControlItem dynxl_mamut_1 = {349, 1};
-  ControlItem dynxl_mamut_2 = {351, 1};
+  ControlItem stepper_mamut_1_goal_pos = {345, 2};
+  ControlItem stepper_mamut_2_goal_pos  = {347, 2};
+  ControlItem dynxl_mamut_1_goal_pos = {349, 2};
+  ControlItem dynxl_mamut_2_goal_pos = {351, 2};
+  ControlItem stepper_mamut_1_akt_pos = {353, 2};
+  ControlItem stepper_mamut_2_akt_pos = {355, 2};
+  ControlItem stepper_mamut_1_akt_vel = {357, 2};
+  ControlItem stepper_mamut_2_akt_vel = {359, 2};
+  ControlItem dynxl_mamut_1_akt_pos = {361, 2};
+  ControlItem dynxl_mamut_2_akt_pos = {363, 2};
+  ControlItem dynxl_mamut_1_akt_vel = {365, 2};
+  ControlItem dynxl_mamut_2_akt_vel = {367, 2};
+  ControlItem mamut_endschalt_1 = {369,1};
+  ControlItem mamut_endschalt_2 = {370,1};
   //##########################hinzugefügt step 1
 } ControlTable;
 

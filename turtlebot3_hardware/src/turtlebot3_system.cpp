@@ -44,7 +44,7 @@ hardware_interface::CallbackReturn TurtleBot3SystemHardware::on_init(
   usb_port_ = info_.hardware_parameters["opencr_usb_port"];
   baud_rate_ = stoi(info_.hardware_parameters["opencr_baud_rate"]);
   heartbeat_ = 0;
-
+  timestamp=std::chrono::steady_clock::now();
   opencr_ = std::make_unique<OpenCR>(id_);
   if (opencr_->open_port(usb_port_)) {
     RCLCPP_INFO(logger, "Succeeded to open port");
@@ -75,6 +75,7 @@ hardware_interface::CallbackReturn TurtleBot3SystemHardware::on_init(
   dxl_positions_.resize(WHEELJOINT_NUMBER, 0.0);
   dxl_velocities_.resize(WHEELJOINT_NUMBER, 0.0);
   //#######hinzugefügt
+  mamut_position_commands_.resize(info_.joints.size()-WHEELJOINT_NUMBER, 0.0);
   mamut_positions_.resize(info_.joints.size()-WHEELJOINT_NUMBER, 0.0);
   mamut_velocities_.resize(info_.joints.size()-WHEELJOINT_NUMBER, 0.0);
   //#######hinzugefügt
@@ -82,7 +83,7 @@ hardware_interface::CallbackReturn TurtleBot3SystemHardware::on_init(
     info_.sensors[0].state_interfaces.size() +
     info_.sensors[1].state_interfaces.size(),
     0.0);
-
+RCLCPP_INFO(logger, "ANZAHL_AKTOREN %d", info_.joints.size());
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -102,11 +103,12 @@ TurtleBot3SystemHardware::export_state_interfaces()
   for (uint8_t i = WHEELJOINT_NUMBER; i < info_.joints.size(); i++) {
     state_interfaces.emplace_back(
       hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &mamut_positions_[i]));
+        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &mamut_positions_[i-WHEELJOINT_NUMBER]));
     state_interfaces.emplace_back(
       hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &mamut_velocities_[i]));
+        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &mamut_velocities_[i-WHEELJOINT_NUMBER]));
   }
+
     //#######hinzugefügt
   for (uint8_t i = 0, k = 0; i < info_.sensors.size(); i++) {
     for (uint8_t j = 0; j < info_.sensors[i].state_interfaces.size(); j++) {
@@ -137,7 +139,7 @@ TurtleBot3SystemHardware::export_command_interfaces()
   for (uint8_t i = WHEELJOINT_NUMBER; i < info_.joints.size(); i++) {
     command_interfaces.emplace_back(
       hardware_interface::CommandInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &mamut_positions_[i]));
+        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &mamut_position_commands_[i-WHEELJOINT_NUMBER]));
   }
     //#######hinzugefügt
   return command_interfaces;
@@ -206,7 +208,10 @@ hardware_interface::return_type TurtleBot3SystemHardware::read(
   opencr_sensor_states_[11] = opencr_->get_battery().percentage;
   opencr_sensor_states_[12] = opencr_->get_battery().design_capacity;
   opencr_sensor_states_[13] = opencr_->get_battery().present;
-
+  std::vector<double> vels=opencr_->get_actuator_velocities();
+  std::vector<double> posis=opencr_->get_actuator_positions();
+  std::copy(vels.begin(),vels.end(),mamut_velocities_.begin());
+  std::copy(posis.begin(),posis.end(),mamut_positions_.begin());
   return hardware_interface::return_type::OK;
 }
 
@@ -220,10 +225,14 @@ hardware_interface::return_type TurtleBot3SystemHardware::write(
     RCLCPP_ERROR(logger, "Can't control wheels");
   }
   std::vector<int16_t> dievals;
-  for(auto i:mamut_positions_){
-dievals.push_back(static_cast<int16_t>(i));
-  }
+for(auto i:mamut_position_commands_){
+  dievals.push_back(static_cast<int16_t>(i));
+}
 //RCLCPP_INFO(this->get_logger(),"sending %d %d %i %i",byte[0] ,byte[1] ,byte[3],byte[4]);
+  if(std::chrono::steady_clock::now()-timestamp>1s){
+    timestamp=std::chrono::steady_clock::now();
+    RCLCPP_INFO(logger,"Publishing array: %d, %d, %d",dievals[0],dievals[1],dievals[2]);
+  }
   if(!opencr_->write_actuators(dievals)){
     RCLCPP_ERROR(logger, "Can't control actuators");
   }

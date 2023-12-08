@@ -102,6 +102,7 @@ https://github.com/ros-controls/ros2_control_demos/blob/foxy/ros2_control_demo_d
           <param name="initial_value">0.0</param>
         </state_interface>
       </sensor>
+      
 <joint name="slide_horiz">
         <command_interface name="position">
           <param name="min">-24.5</param>

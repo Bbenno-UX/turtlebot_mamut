@@ -21,7 +21,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include <chrono>
+#include <algorithm>
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
@@ -40,6 +41,7 @@ namespace robotis
 {
 namespace turtlebot3_hardware
 {
+  using namespace std::chrono_literals;
 class TurtleBot3SystemHardware
   : public hardware_interface::SystemInterface
 {
@@ -77,7 +79,7 @@ private:
   std::string usb_port_;
   uint32_t baud_rate_;
   uint8_t heartbeat_;
-
+  std::chrono::time_point<std::chrono::steady_clock> timestamp;
   std::unique_ptr<OpenCR> opencr_;
 
   std::vector<double> dxl_wheel_commands_;
@@ -85,6 +87,7 @@ private:
   std::vector<double> dxl_positions_;
   std::vector<double> dxl_velocities_;
   //########hinzugefügt
+  std::vector<double> mamut_position_commands_;
   std::vector<double> mamut_positions_;
   std::vector<double> mamut_velocities_;
    //########hinzugefügt

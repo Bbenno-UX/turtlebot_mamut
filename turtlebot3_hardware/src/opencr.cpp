@@ -228,6 +228,22 @@ bool OpenCR::set_wheel_velocities(const std::vector<double> & velocities)
 
   return comm_result;
 }
+std::vector<double> OpenCR::get_actuator_positions(){
+  std::vector<double> erg;
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.stepper_mamut_1_akt_pos.address,opencr_control_table.stepper_mamut_1_akt_pos.length)));
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.stepper_mamut_2_akt_pos.address,opencr_control_table.stepper_mamut_2_akt_pos.length)));
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.dynxl_mamut_1_akt_pos.address,opencr_control_table.dynxl_mamut_1_akt_pos.length)));
+  //erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.dynxl_mamut_2_akt_pos.address,opencr_control_table.dynxl_mamut_2_akt_pos.length)));
+  return erg;
+}
+std::vector<double> OpenCR::get_actuator_velocities(){
+  std::vector<double> erg;
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.stepper_mamut_1_akt_vel.address,opencr_control_table.stepper_mamut_1_akt_vel.length)));
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.stepper_mamut_2_akt_vel.address,opencr_control_table.stepper_mamut_2_akt_vel.length)));
+  erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.dynxl_mamut_1_akt_vel.address,opencr_control_table.dynxl_mamut_1_akt_vel.length)));
+  //erg.push_back(static_cast<double>(get_data<int16_t>(opencr_control_table.dynxl_mamut_2_akt_vel.address,opencr_control_table.dynxl_mamut_2_akt_vel.length)));
+  return erg;
+}
 bool OpenCR::write_actuators(const std::vector<int16_t> & mamut_aktoren){
 
         uint8_t byte[8];
